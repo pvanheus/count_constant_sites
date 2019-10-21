@@ -21,71 +21,23 @@ SOFTWARE.
 */
 
 extern crate clap;
-extern crate seq_io;
-extern crate flate2;
 
 use clap::{App, Arg};
-use seq_io::fasta;
-use std::collections::HashMap;
-use flate2::read::GzDecoder;
-use std::io::{Read,BufReader};
-use std::fs::File;
+mod lib;
 
 fn main() {
     let matches = App::new("compute constant sites in an alignment")
         .version("0.1")
         .author("Peter van Heusden <pvh@sanbi.ac.za>")
-        .arg(Arg::with_name("INPUT")
+        .arg(Arg::with_name("FASTA_FILE")
             .help("Multiple sequence alignment input file (FASTA format)")
             .required(true)
             .index(1)
         ).get_matches();
 
-    let filename = matches.value_of("INPUT").unwrap();
-    let infile = File::open(filename).unwrap();
-    let buf_reader = BufReader::new(infile);
+    let filename = matches.value_of("FASTA_FILE").unwrap();
 
-    let mut reader =  fasta::Reader::new(if filename.ends_with(".gz") {
-        Box::new(GzDecoder::new(buf_reader)) as Box<dyn Read>
-    } else {
-        Box::new(buf_reader) as Box<dyn Read>
-    });
-    let mut first_sequence = true;
-    let mut sites: Vec<char> = Vec::new();
-    while let Some(result) = reader.next() {
-//    for result in reader.records() {
-        let record = result.expect("Error reading record");
-        if first_sequence {
-            for line in record.seq_lines() {
-                for base in line {
-                    sites.push((*base as char).to_ascii_lowercase());
-                }
-            }
-            first_sequence = false;
-        } else {
-            let mut i = 0;
-            for line in record.seq_lines() {
-                for base in line {
-                    if sites[i] != (*base as char).to_ascii_lowercase() {
-                        sites[i] = '-';
-                    }
-                    i += 1;
-                }
-            }
-        }
-    }
-
-    let mut constant_sites: HashMap<char, u64> = HashMap::new();
-    constant_sites.insert('a', 0);
-    constant_sites.insert('c', 0);
-    constant_sites.insert('g', 0);
-    constant_sites.insert('t', 0);
-
-    for base in sites {
-        if constant_sites.contains_key(&base) {
-            constant_sites.insert(base, constant_sites.get(&base).unwrap() + 1);
-        }
-    }
+    let constant_sites = lib::count_constant_sites(filename);
 
     println!("{},{},{},{}",
         constant_sites.get(&'a').unwrap(),

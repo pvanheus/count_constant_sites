@@ -2,7 +2,6 @@
 name = "constant_sites"
 description = "Compute the count of cases in constant sites in a (FASTA) multiple sequence alignment"
 license = "MIT"
-license-file = "LICENSE"
 homepage = "https://github.com/pvanheus/count_constant_sites"
 version = "0.1.0"
 authors = ["Peter van Heusden <pvh@sanbi.ac.za>"]
@@ -10,9 +9,9 @@ edition = "2018"
 
 
 [dependencies]
-seq_io = "*"
-flate2 = "*"
-clap = "*"
+seq_io = "0.3.0"
+flate2 = "1.0.12"
+clap = "2.33.0"
 
 [profile.release]
 lto = true
