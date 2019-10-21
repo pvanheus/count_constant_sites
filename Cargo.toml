@@ -1,9 +1,9 @@
 [package]
-name = "constant_sites"
+name = "count_constant_sites"
 description = "Compute the count of cases in constant sites in a (FASTA) multiple sequence alignment"
 license = "MIT"
 homepage = "https://github.com/pvanheus/count_constant_sites"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Peter van Heusden <pvh@sanbi.ac.za>"]
 edition = "2018"
 
